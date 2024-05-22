@@ -1,10 +1,10 @@
 import React from "react";
 import Notifications from "./Notifications";
 import ProjectList from "../projects/ProjectList";
-import { useSelector } from "react-redux";
+import { useAppSelector } from "../../store/rootReducer";
 
 const Dashboard : React.FC =()=>{
-  const projects = useSelector((state:any) => state.project.projects);
+  const projects = useAppSelector((state) => state.project.projects);
 
     return (
     

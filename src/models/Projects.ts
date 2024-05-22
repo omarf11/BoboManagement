@@ -1,6 +1,9 @@
 
 export type Project = {
-    id:string;
+    id?:string;
     title:string;
     content:string;
+    authorFirstName:string;
+    authorLastName:string;
+    userId:string
 }
