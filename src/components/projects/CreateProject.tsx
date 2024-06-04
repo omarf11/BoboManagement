@@ -1,12 +1,17 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { createProject } from "../../store/reducers/projectModule";
 import { Project } from "../../models/Projects";
 import { useAppDispatch } from "../../store/rootReducer";
+import { AuthContext } from "../../Context/AuthProvider";
 
 const CreateProject: React.FC = () => {
   const dispatch = useAppDispatch();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const { user } = useContext(AuthContext);
+
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
 
   const handleTitleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -18,20 +23,28 @@ const CreateProject: React.FC = () => {
   ) => {
     setContent(e.target.value);
   };
+  const handleFirstNameChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFirstName(e.target.value);
+  };
+  const handleLastNameChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setLastName(e.target.value);
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const newProject: Project = {
       title: title,
       content: content,
-      authorFirstName: "John",
-      authorLastName: "Doe",
-      userId: "user123", // Replace with the actual user ID
+      authorFirstName: firstName,
+      authorLastName: lastName,
+      userId: user?.email ?? "undefined",
     };
 
     dispatch(createProject(newProject));
-
-    console.log(title);
-    console.log(content);
   };
 
   return (
@@ -41,6 +54,14 @@ const CreateProject: React.FC = () => {
         <div className="input-field">
           <input type="text" id="title" onChange={handleTitleChange} />
           <label htmlFor="title">Project Title</label>
+        </div>
+        <div className="input-field">
+          <input type="text" id="firstname" onChange={handleFirstNameChange} />
+          <label htmlFor="title">Author FirstName</label>
+        </div>
+        <div className="input-field">
+          <input type="text" id="lastname" onChange={handleLastNameChange} />
+          <label htmlFor="title">Author LastName</label>
         </div>
         <div className="input-field">
           <textarea

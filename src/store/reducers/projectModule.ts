@@ -1,6 +1,6 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Project } from "../../models/Projects";
-import {  addDoc, collection } from "firebase/firestore";
+import {  addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../firebase";
 
 interface ProjectError {
@@ -22,14 +22,11 @@ export const createProject = createAsyncThunk<
   Project,
   Project,
   { rejectValue: ProjectError }
->("projects/createProject", async (project: Project, rejectWithValue) => {
+>("projects/createProject", async (project: Project, {rejectWithValue}) => {
   try {
      const docRef = await addDoc(
       collection(db, 'projects'),
       {...project,
-        authorFirstName:"omes",
-        authorFirstLame: "faheehzz",
-        userId:"omesf1",
         createdAt: new Date()
       }
     );
@@ -39,7 +36,7 @@ export const createProject = createAsyncThunk<
     return  newProject;
 
   } catch (error) {
-    return rejectWithValue.rejectWithValue(error as ProjectError);
+    return rejectWithValue(error as ProjectError);
   }
 });
 
@@ -48,18 +45,17 @@ export const getProjectsByUserId = createAsyncThunk(
     "projects/createProject",
     async (userId:string, { rejectWithValue }) => {
       try {
-        // call firestore with passed in project...
-      } catch (error) {
-        return rejectWithValue(error);
-      }
-    }
-  );
-  
-  export const deleteProjectByProjectId = createAsyncThunk(
-    "projects/createProject",
-    async (projectId: string, { rejectWithValue }) => {
-      try {
-        // call firestore with passed in project...
+
+        const q = query(collection(db, "projects"), where("userId", "==", userId));
+        const querySnapShot = await getDocs(q);
+        const projects:Project[] = [];
+
+        querySnapShot.forEach((doc)=> {
+          projects.push({id:doc.id , ...doc.data() as Project})
+        })
+        
+        return projects;
+
       } catch (error) {
         return rejectWithValue(error);
       }
@@ -78,8 +74,6 @@ const projectSlice = createSlice({
       })
       // add logic to get action.payload
       .addCase(createProject.fulfilled, (state , action: PayloadAction<Project>) => {
-        console.log( "ACTIOn . PAYLOAD",action.payload)
-        console.log("state.projects: "  , state.projects)
         state.projects.push(action.payload)
         state.isLoading = false;
       })
@@ -87,8 +81,20 @@ const projectSlice = createSlice({
       .addCase(createProject.rejected, (state , action: PayloadAction<unknown>) => {
         state.isLoading = false;
         state.errorMessage = action.payload;
-        state
-      }),
+      })
+      .addCase(getProjectsByUserId.pending , (state:ProjectState) => {
+        state.isLoading = true;
+        state.errorMessage = undefined;
+      })
+      .addCase(getProjectsByUserId.fulfilled , (state, action: PayloadAction<Project[]>) => {
+        state.isLoading = false;
+        state.errorMessage = undefined;
+        state.projects = action.payload;
+      })
+      .addCase(getProjectsByUserId.rejected , (state , action: PayloadAction<unknown>)  => {
+        state.isLoading = false;
+        state.errorMessage = action.payload;
+      })      
 }); 
 
 export default projectSlice.reducer;
