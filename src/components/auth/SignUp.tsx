@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/rootReducer";
-import { registerUser } from "../../store/reducers/authModule";
+import { registerUser } from "../../store/modules/authModule";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
@@ -20,6 +20,7 @@ const SignUp: React.FC = () => {
      await dispatch(registerUser({ userEmail: email, userPassword: password }));
      if (userAuth.isLoggedIn && userAuth.user ) {
       toast.success("User Registered Successfully!", {
+        className: "registeredToast",
         position: "top-center",
       });
       navigate("/")

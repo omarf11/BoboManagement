@@ -1,13 +1,12 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 
-import projectReducer from "./reducers/projectModule";
+import projectReducer from "./modules/projectModule";
 import { thunk } from "redux-thunk";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import authReducer from "./reducers/authModule";
+import authReducer from "./modules/authModule";
 
 // Combine reducers (add more slices as needed)
 const rootReducer = combineReducers({
-  // auth:authReducer,
   project: projectReducer,
   userAuth: authReducer
 });

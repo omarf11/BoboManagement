@@ -1,46 +1,30 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { auth } from "../firebase";
-import { User } from "firebase/auth";
+import {
+  clearCurrentUser,
+  setCurrentUserInState,
+} from "../store/modules/authModule";
+import { useAppDispatch } from "../store/rootReducer";
 
 interface AuthProviderProps {
   children: React.ReactNode;
 }
-type AuthContextType = {
-  user?: User;
-  setCurrentUser:(name: string) => void;
-}
-
-export const AuthContext = createContext<AuthContextType>({
-  user: undefined,
-  setCurrentUser:()=>{}
-});
-
-// Authentication provider component
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [currentUser, setCurrentUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      setLoading(false);
       if (user) {
-        setCurrentUser(user);
+        dispatch(setCurrentUserInState({ userPayload: user }));
       } else {
-        setCurrentUser(null);
+        dispatch(clearCurrentUser());
       }
     });
 
     return () => {
       if (unsubscribe) unsubscribe();
     };
-  }, []);
+  }, [dispatch]);
 
-  const values = { user: currentUser, setCurrentUser: setCurrentUser };
-
-  return (
-    <AuthContext.Provider value={values}>
-      {!loading && children}
-    </AuthContext.Provider>
-  );
+  return <>{children}</>;
 };

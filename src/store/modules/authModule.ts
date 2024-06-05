@@ -13,7 +13,9 @@ interface AuthState {
   isLoading: boolean;
   authError?: unknown;
 }
-
+interface UserPayload {
+  userPayload: User;
+}
 const initState: AuthState = {
   isLoggedIn: false,
   userId: undefined,
@@ -73,7 +75,18 @@ export const registerUser = createAsyncThunk(
 const authSlice = createSlice({
   name: "User",
   initialState: initState,
-  reducers: {},
+  reducers: {
+    setCurrentUser(state, action: PayloadAction<UserPayload>) {
+      state.user = action.payload.userPayload;
+      state.authError = undefined;
+      state.isLoading = false;
+      state.isLoggedIn = true;
+      state.userId = action.payload.userPayload.uid;
+    },
+    clearCurrentUser(state) {
+      state.user = undefined;
+    },
+  },
   extraReducers(builder) {
     builder
       .addCase(signOutUser.pending, (state) => {
@@ -141,3 +154,5 @@ const authSlice = createSlice({
 });
 
 export default authSlice.reducer;
+export const setCurrentUserInState =  authSlice.actions.setCurrentUser;
+export const clearCurrentUser =  authSlice.actions.clearCurrentUser;

@@ -1,14 +1,15 @@
-import React, { useContext, useState } from "react";
-import { createProject } from "../../store/reducers/projectModule";
+import React, { useState } from "react";
+import { toast } from "react-toastify";
 import { Project } from "../../models/Projects";
-import { useAppDispatch } from "../../store/rootReducer";
-import { AuthContext } from "../../Context/AuthProvider";
+import { createProject } from "../../store/modules/projectModule";
+import { useAppDispatch, useAppSelector } from "../../store/rootReducer";
+import "./CreatedProject.css";
 
 const CreateProject: React.FC = () => {
   const dispatch = useAppDispatch();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const { user } = useContext(AuthContext);
+  const { user } = useAppSelector(state => state.userAuth);
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -45,6 +46,10 @@ const CreateProject: React.FC = () => {
     };
 
     dispatch(createProject(newProject));
+    toast.success("Project Created Successfully! ", {
+      className: "createdProject",
+      position: "top-center",
+    });
   };
 
   return (

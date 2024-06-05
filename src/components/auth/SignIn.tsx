@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/rootReducer";
-import { signInUser } from "../../store/reducers/authModule";
+import { signInUser } from "../../store/modules/authModule";
 import { toast } from "react-toastify";
 
 const SignIn: React.FC = () => {

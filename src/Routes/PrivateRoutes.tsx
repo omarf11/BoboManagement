@@ -1,17 +1,16 @@
 
-import React, { useContext } from "react";
+import React from "react";
 import { Navigate } from "react-router-dom";
-import { AuthContext } from "../Context/AuthProvider";
+import { useAppSelector } from "../store/rootReducer";
 
 interface PrivateRouteProps {
    children: React.ReactNode;
 }
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
-  const {user} = useContext(AuthContext);
-
+const user  = useAppSelector(state => state.userAuth.user);
   if (!user) {
-    return <Navigate to = "/signIn" replace/>
+    return <Navigate to = "/signin" replace/>
   }
   else{
     return <>{children}</>;  }
