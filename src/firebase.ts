@@ -6,7 +6,7 @@ import { getFirestore } from 'firebase/firestore';
 
 
 const firebaseConfig = {
-    apiKey: "AIzaSyB0NdwYXnYtnGhA7gzmMOdtofnIKgcpZco", // hide values in environment files before pushing 
+    apiKey: `${process.env.REACT_APP_FIREBASE_APIKEY}`,
     authDomain: "boboplanner-8a0a3.firebaseapp.com",
     projectId: "boboplanner-8a0a3",
     storageBucket: "boboplanner-8a0a3.appspot.com",

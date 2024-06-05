@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/rootReducer";
-import { signInUser } from "../../store/reducers/authReducer";
+import { signInUser } from "../../store/reducers/authModule";
+import { toast } from "react-toastify";
 
 const SignIn: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -22,6 +23,9 @@ const SignIn: React.FC = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error:any) {
       console.log(error.message);
+      toast.error(error.message, {
+        position: "bottom-center",
+      });
     }
   };
 

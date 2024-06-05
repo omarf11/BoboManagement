@@ -3,9 +3,6 @@ import { Project } from "../../models/Projects";
 import {  addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../firebase";
 
-interface ProjectError {
-  errorMessage: string
-}
 export interface ProjectState {
   projects: Project[];
   isLoading: boolean;
@@ -18,11 +15,7 @@ const initState: ProjectState = {
   errorMessage:undefined
 };
 
-export const createProject = createAsyncThunk<
-  Project,
-  Project,
-  { rejectValue: ProjectError }
->("projects/createProject", async (project: Project, {rejectWithValue}) => {
+export const createProject = createAsyncThunk("projects/createProject", async (project: Project, {rejectWithValue}) => {
   try {
      const docRef = await addDoc(
       collection(db, 'projects'),
@@ -36,7 +29,7 @@ export const createProject = createAsyncThunk<
     return  newProject;
 
   } catch (error) {
-    return rejectWithValue(error as ProjectError);
+    return rejectWithValue(error);
   }
 });
 
@@ -72,12 +65,10 @@ const projectSlice = createSlice({
         state.isLoading = true;
         state.errorMessage = undefined;
       })
-      // add logic to get action.payload
       .addCase(createProject.fulfilled, (state , action: PayloadAction<Project>) => {
         state.projects.push(action.payload)
         state.isLoading = false;
       })
-      //add logic to get error 
       .addCase(createProject.rejected, (state , action: PayloadAction<unknown>) => {
         state.isLoading = false;
         state.errorMessage = action.payload;

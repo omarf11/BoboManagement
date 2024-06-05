@@ -1,5 +1,9 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { signInWithEmailAndPassword, User } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  User,
+} from "firebase/auth";
 import { auth } from "../../firebase";
 
 interface AuthState {
@@ -50,6 +54,21 @@ export const signOutUser = createAsyncThunk("user/signout", async () => {
 });
 
 //registerUser
+export const registerUser = createAsyncThunk(
+  "user/register",
+  async (userCredentials: UserCredentials, { rejectWithValue }) => {
+    try {
+      const newUser = await createUserWithEmailAndPassword(
+        auth,
+        userCredentials.userEmail,
+        userCredentials.userPassword
+      );
+      return newUser.user;
+    } catch (error) {
+      rejectWithValue(error);
+    }
+  }
+);
 
 const authSlice = createSlice({
   name: "User",
@@ -59,6 +78,7 @@ const authSlice = createSlice({
     builder
       .addCase(signOutUser.pending, (state) => {
         state.isLoading = true;
+        state.authError = undefined;
       })
       .addCase(
         signOutUser.rejected,
@@ -74,7 +94,6 @@ const authSlice = createSlice({
         state.isLoggedIn = false;
         state.userId = undefined;
       })
-
       .addCase(signInUser.pending, (state: AuthState) => {
         state.isLoggedIn = false;
         state.user = undefined;
@@ -92,9 +111,32 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.authError = undefined;
         state.isLoading = false;
-        state.userId = action.payload.user.email!;
+        state.userId = action.payload.user.uid;
         state.isLoggedIn = true;
-      });
+      })
+      .addCase(registerUser.pending, (state: AuthState) => {
+        state.isLoggedIn = false;
+        state.isLoading = true;
+        state.authError = undefined;
+      })
+      .addCase(registerUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.user = action.payload;
+        state.userId = action.payload?.uid;
+        state.isLoggedIn = true;
+        state.authError = undefined;
+
+      })
+      .addCase(
+        registerUser.rejected,
+        (state, action: PayloadAction<unknown>) => {
+          state.authError = action.payload;
+          state.isLoading = false;
+          state.user = undefined;
+          state.userId = undefined;
+          state.isLoggedIn = false;
+        }
+      );
   },
 });
 
