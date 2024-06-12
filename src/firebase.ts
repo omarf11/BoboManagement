@@ -6,7 +6,7 @@ import { getFirestore } from 'firebase/firestore';
 
 
 const firebaseConfig = {
-    apiKey: `${process.env.REACT_APP_FIREBASE_APIKEY}`,
+    apiKey: "AIzaSyB0NdwYXnYtnGhA7gzmMOdtofnIKgcpZco",
     authDomain: "boboplanner-8a0a3.firebaseapp.com",
     projectId: "boboplanner-8a0a3",
     storageBucket: "boboplanner-8a0a3.appspot.com",

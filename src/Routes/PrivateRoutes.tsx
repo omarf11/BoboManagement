@@ -10,7 +10,7 @@ interface PrivateRouteProps {
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
 const user  = useAppSelector(state => state.userAuth.user);
   if (!user) {
-    return <Navigate to = "/signin" replace/>
+    return < Navigate to = "/signin" replace/>
   }
   else{
     return <>{children}</>;  }

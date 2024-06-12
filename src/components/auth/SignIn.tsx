@@ -9,7 +9,6 @@ const SignIn: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const isLoggedIn = useAppSelector(state => state.userAuth.isLoggedIn);
   const user = useAppSelector(state => state.userAuth.user);
 
 
@@ -17,7 +16,7 @@ const SignIn: React.FC = () => {
     e.preventDefault();
     try {
       dispatch(signInUser({userEmail:email , userPassword:password}))
-      if (user && isLoggedIn) {
+      if (user) {
         navigate('/');
       }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
